@@ -23,9 +23,17 @@ public class CoinGeckoClient {
 	private final TrackerProperties properties;
 	private final HttpClient httpClient;
 	private final CoinGeckoPriceParser parser;
+	private final String apiKey;
 
 	public CoinGeckoClient(TrackerProperties properties) {
 		this.properties = properties;
+		String configuredApiKey = properties.getApiKey();
+		if (configuredApiKey == null || configuredApiKey.isBlank()) {
+			throw new IllegalStateException(
+					"Missing CoinGecko API key. Set COINGECKO_DEMO_API_KEY (mapped to blocknot.tracker.api-key)."
+			);
+		}
+		this.apiKey = configuredApiKey.trim();
 		this.httpClient = HttpClient.newBuilder()
 				.connectTimeout(Duration.ofMillis(properties.getRequestTimeoutMs()))
 				.build();
@@ -48,7 +56,11 @@ public class CoinGeckoClient {
 
 		HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 		if (response.statusCode() < 200 || response.statusCode() >= 300) {
-			throw new IOException("CoinGecko returned HTTP " + response.statusCode());
+			String body = response.body();
+			if (body == null) {
+				body = "";
+			}
+			throw new IOException("CoinGecko returned HTTP " + response.statusCode() + ": " + body);
 		}
 
 		return parser.parseSimplePriceResponse(response.body(), coinIds, vsCurrency);
@@ -73,7 +85,9 @@ public class CoinGeckoClient {
 
 		String idsParam = URLEncoder.encode(String.join(",", coinIds), StandardCharsets.UTF_8);
 		String currencyParam = URLEncoder.encode(vsCurrency, StandardCharsets.UTF_8);
+		String apiKeyParam = URLEncoder.encode(apiKey, StandardCharsets.UTF_8);
 
-		return URI.create(base + "/simple/price?ids=" + idsParam + "&vs_currencies=" + currencyParam);
+		return URI.create(base + "/simple/price?ids=" + idsParam + "&vs_currencies=" + currencyParam
+				+ "&x_cg_demo_api_key=" + apiKeyParam);
 	}
 }

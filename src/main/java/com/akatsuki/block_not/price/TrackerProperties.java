@@ -43,6 +43,13 @@ public class TrackerProperties {
 	 */
 	private URI apiBaseUrl = URI.create("https://api.coingecko.com/api/v3");
 
+	/**
+	 * CoinGecko API key.
+	 *
+	 * For the free "Demo" plan, send as request header: x-cg-demo-api-key.
+	 */
+	private String apiKey;
+
 	public List<String> getCoinIds() {
 		return coinIds;
 	}
@@ -81,6 +88,14 @@ public class TrackerProperties {
 
 	public void setApiBaseUrl(URI apiBaseUrl) {
 		this.apiBaseUrl = apiBaseUrl;
+	}
+
+	public String getApiKey() {
+		return apiKey;
+	}
+
+	public void setApiKey(String apiKey) {
+		this.apiKey = apiKey;
 	}
 
 	public Map<String, BigDecimal> getPriceThresholds() {
