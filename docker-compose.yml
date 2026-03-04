@@ -1,0 +1,16 @@
+services:
+  block-not:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: block-not-app
+    env_file:
+      - .env
+    restart: on-failure:3
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 120s
+

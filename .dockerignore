@@ -1,0 +1,21 @@
+# Dockerfile
+target/
+.mvn/
+*.jar
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Environment files (handled by docker-compose)
+.env.example
+
+# Documentation
+HELP.md
+README.md
+
