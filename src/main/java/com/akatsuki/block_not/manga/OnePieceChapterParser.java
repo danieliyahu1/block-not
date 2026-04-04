@@ -1,8 +1,11 @@
 package com.akatsuki.block_not.manga;
 
+import org.springframework.stereotype.Component;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Component
 public class OnePieceChapterParser {
 
     private static final Pattern CHAPTER_PATTERN = Pattern.compile(
