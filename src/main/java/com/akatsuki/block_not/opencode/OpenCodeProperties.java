@@ -9,6 +9,8 @@ public class OpenCodeProperties {
 
     private long requestTimeoutMs = 10_000;
 
+    private String githubToken = "";
+
     public String getApiUrl() {
         return apiUrl;
     }
@@ -23,5 +25,13 @@ public class OpenCodeProperties {
 
     public void setRequestTimeoutMs(long requestTimeoutMs) {
         this.requestTimeoutMs = requestTimeoutMs;
+    }
+
+    public String getGithubToken() {
+        return githubToken;
+    }
+
+    public void setGithubToken(String githubToken) {
+        this.githubToken = githubToken;
     }
 }

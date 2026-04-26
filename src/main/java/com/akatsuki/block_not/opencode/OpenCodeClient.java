@@ -27,15 +27,17 @@ public class OpenCodeClient {
     }
 
     public String fetchLatestRelease() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder(URI.create(properties.getApiUrl()))
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(URI.create(properties.getApiUrl()))
                 .timeout(Duration.ofMillis(properties.getRequestTimeoutMs()))
                 .header("Accept", ACCEPT_HEADER)
                 .header("X-GitHub-Api-Version", GITHUB_API_VERSION_HEADER)
-                .header("User-Agent", USER_AGENT)
-                .GET()
-                .build();
+                .header("User-Agent", USER_AGENT);
 
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        if (!properties.getGithubToken().isBlank()) {
+            requestBuilder.header("Authorization", "Bearer " + properties.getGithubToken());
+        }
+
+        HttpResponse<String> response = httpClient.send(requestBuilder.GET().build(), HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() < 200 || response.statusCode() >= 300) {
             throw new IOException("GitHub API returned HTTP " + response.statusCode());
