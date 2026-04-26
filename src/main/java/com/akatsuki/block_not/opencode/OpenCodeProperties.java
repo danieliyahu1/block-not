@@ -7,8 +7,6 @@ public class OpenCodeProperties {
 
     private String apiUrl = "https://api.github.com/repos/anomalyco/opencode/releases/latest";
 
-    private long pollDelayMs = 3_600_000;
-
     private long requestTimeoutMs = 10_000;
 
     public String getApiUrl() {
@@ -17,14 +15,6 @@ public class OpenCodeProperties {
 
     public void setApiUrl(String apiUrl) {
         this.apiUrl = apiUrl;
-    }
-
-    public long getPollDelayMs() {
-        return pollDelayMs;
-    }
-
-    public void setPollDelayMs(long pollDelayMs) {
-        this.pollDelayMs = pollDelayMs;
     }
 
     public long getRequestTimeoutMs() {

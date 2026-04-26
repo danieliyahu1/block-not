@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -13,6 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class OpenCodeNotifier {
 
     private static final Logger log = LoggerFactory.getLogger(OpenCodeNotifier.class);
+    private static final String RELEASES_URL = "https://github.com/anomalyco/opencode/releases/latest";
 
     private final OpenCodeClient openCodeClient;
     private final OpenCodeVersionParser versionParser;
@@ -31,33 +33,29 @@ public class OpenCodeNotifier {
         try {
             String json = openCodeClient.fetchLatestRelease();
             String latestVersion = versionParser.parseVersion(json);
+            Instant now = Instant.now();
 
             if (latestVersion == null) {
-                log.warn("{} | Could not parse latest OpenCode version from response", Instant.now());
+                log.warn("{} | Could not parse latest OpenCode version from response", now);
                 return;
             }
 
             String lastVersion = lastNotifiedVersion.get();
-
-            log.info("{} | Latest OpenCode version: {} — Last notified: {}", Instant.now(), latestVersion, lastVersion);
-
-            if (lastVersion == null) {
-                // First run — store the current version silently, no notification
-                lastNotifiedVersion.set(latestVersion);
-                log.info("{} | OpenCode version tracker initialized at {}", Instant.now(), latestVersion);
-                return;
-            }
+            log.info("{} | Latest OpenCode version: {} — Last notified: {}", now, latestVersion, lastVersion);
 
             if (!latestVersion.equals(lastVersion)) {
-                String message = "New OpenCode version available: " + latestVersion
-                        + "\nhttps://github.com/anomalyco/opencode/releases/latest";
-                telegramClient.sendMessage(message);
-                lastNotifiedVersion.set(latestVersion);
-                log.info("{} | Notified about new OpenCode version {}", Instant.now(), latestVersion);
+                notifyNewVersion(latestVersion, now);
             }
 
         } catch (Exception ex) {
             log.error("{} | Failed to check for new OpenCode version: {}", Instant.now(), ex.getMessage());
         }
+    }
+
+    private void notifyNewVersion(String version, Instant now) throws IOException, InterruptedException {
+        String message = "New OpenCode version available: " + version + "\n" + RELEASES_URL;
+        telegramClient.sendMessage(message);
+        lastNotifiedVersion.set(version);
+        log.info("{} | Notified about new OpenCode version {}", now, version);
     }
 }

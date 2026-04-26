@@ -12,6 +12,10 @@ import java.time.Duration;
 @Component
 public class OpenCodeClient {
 
+    private static final String ACCEPT_HEADER = "application/vnd.github+json";
+    private static final String GITHUB_API_VERSION_HEADER = "2022-11-28";
+    private static final String USER_AGENT = "block-not-bot";
+
     private final OpenCodeProperties properties;
     private final HttpClient httpClient;
 
@@ -25,8 +29,9 @@ public class OpenCodeClient {
     public String fetchLatestRelease() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder(URI.create(properties.getApiUrl()))
                 .timeout(Duration.ofMillis(properties.getRequestTimeoutMs()))
-                .header("Accept", "application/vnd.github+json")
-                .header("X-GitHub-Api-Version", "2022-11-28")
+                .header("Accept", ACCEPT_HEADER)
+                .header("X-GitHub-Api-Version", GITHUB_API_VERSION_HEADER)
+                .header("User-Agent", USER_AGENT)
                 .GET()
                 .build();
 
