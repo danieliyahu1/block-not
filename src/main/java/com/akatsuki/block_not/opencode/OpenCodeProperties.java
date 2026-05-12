@@ -1,9 +1,10 @@
 package com.akatsuki.block_not.opencode;
 
+import com.akatsuki.block_not.github.GitHubReleaseProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "blocknot.opencode")
-public class OpenCodeProperties {
+public class OpenCodeProperties implements GitHubReleaseProperties {
 
     private String apiUrl = "https://api.github.com/repos/anomalyco/opencode/releases/latest";
 
@@ -11,6 +12,7 @@ public class OpenCodeProperties {
 
     private String githubToken = "";
 
+    @Override
     public String getApiUrl() {
         return apiUrl;
     }
@@ -19,6 +21,7 @@ public class OpenCodeProperties {
         this.apiUrl = apiUrl;
     }
 
+    @Override
     public long getRequestTimeoutMs() {
         return requestTimeoutMs;
     }
@@ -27,6 +30,7 @@ public class OpenCodeProperties {
         this.requestTimeoutMs = requestTimeoutMs;
     }
 
+    @Override
     public String getGithubToken() {
         return githubToken;
     }
