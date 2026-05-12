@@ -27,7 +27,7 @@ public class ZeroClawNotifier extends GitHubReleaseNotifier {
         return RELEASES_URL;
     }
 
-    @Scheduled(fixedDelayString = "${blocknot.zeroclaw.poll-delay-ms:3600000}", initialDelayString = "5000")
+    @Scheduled(fixedDelayString = "${blocknot.zeroclaw.poll-delay-ms:3600000}", initialDelayString = "15000")
     @Override
     public void checkForNewVersion() {
         super.checkForNewVersion();

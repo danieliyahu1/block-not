@@ -27,7 +27,7 @@ public class OpencodeTgBotNotifier extends GitHubReleaseNotifier {
         return RELEASES_URL;
     }
 
-    @Scheduled(fixedDelayString = "${blocknot.opencodetgbot.poll-delay-ms:3600000}", initialDelayString = "5000")
+    @Scheduled(fixedDelayString = "${blocknot.opencodetgbot.poll-delay-ms:3600000}", initialDelayString = "10000")
     @Override
     public void checkForNewVersion() {
         super.checkForNewVersion();

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "render": {
+      "type": "remote",
+      "enabled": true,
+      "url": "https://mcp.render.com/mcp",
+      "headers": {
+        "Authorization": "rnd_n8evvR9c6MaoiIDWQjIUJGibvY60"
+      }
+    }
+  }
+}
