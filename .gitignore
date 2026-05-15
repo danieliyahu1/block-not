@@ -32,6 +32,9 @@ build/
 ### VS Code ###
 .vscode/
 
+### Playwright MCP ###
+.playwright-mcp/
+
 ### Environment Variables ###
 .env
 .env.local
