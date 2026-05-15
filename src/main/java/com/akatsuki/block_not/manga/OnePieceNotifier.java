@@ -43,7 +43,7 @@ public class OnePieceNotifier {
             log.info("{} | Latest chapter on site: {} — Last notified: {}", Instant.now(), currentChapter, lastNotified);
 
             if (currentChapter > lastNotified) {
-                String message = "\uD83D\uDCDA New One Piece chapter: " + latest.toString();
+                String message = "\uD83D\uDCDA New One Piece chapter: " + latest.toString() + "\n\uD83D\uDD17 " + latest.getUrl();
                 telegramClient.sendMessage(message);
                 lastNotifiedChapter.set(currentChapter);
                 log.info("{} | Notified about chapter {} ({})", Instant.now(), currentChapter, latest.getTitle());

@@ -8,13 +8,8 @@ import java.util.regex.Pattern;
 @Component
 public class OnePieceChapterParser {
 
-    private static final Pattern CHAPTER_PATTERN = Pattern.compile(
-            "one-piece-chapter-(\\d+)[^\"]*\"[^>]*>\\s*<div[^>]*>\\s*One Piece\\s*Chapter\\s*\\d+\\s*</div>\\s*<div[^>]*>([^<]+)</div>",
-            Pattern.CASE_INSENSITIVE | Pattern.DOTALL
-    );
-
     private static final Pattern CHAPTER_TITLE_PATTERN = Pattern.compile(
-            "one-piece-chapter-(\\d+)[^\"]*\"[^>]*>\\s*<div[^>]*>\\s*One Piece\\s*Chapter\\s*\\d+\\s*</div>\\s*<div[^>]*>([^<]+)</div>",
+            "href=\"([^\"]*one-piece-chapter-(\\d+)[^\"]*)\"[^>]*>\\s*<div[^>]*>\\s*One Piece\\s*Chapter\\s*\\d+\\s*</div>\\s*<div[^>]*>([^<]+)</div>",
             Pattern.CASE_INSENSITIVE | Pattern.DOTALL
     );
 
@@ -25,9 +20,11 @@ public class OnePieceChapterParser {
 
         Matcher matcher = CHAPTER_TITLE_PATTERN.matcher(html);
         if (matcher.find()) {
-            int number = Integer.parseInt(matcher.group(1));
-            String title = matcher.group(2).trim();
-            return new ChapterInfo(number, title);
+            String path = matcher.group(1);
+            int number = Integer.parseInt(matcher.group(2));
+            String title = matcher.group(3).trim();
+            String url = path.startsWith("http") ? path : "https://tcbonepiecechapters.com" + path;
+            return new ChapterInfo(number, title, url);
         }
 
         return null;
@@ -36,10 +33,12 @@ public class OnePieceChapterParser {
     public static class ChapterInfo {
         private final int number;
         private final String title;
+        private final String url;
 
-        public ChapterInfo(int number, String title) {
+        public ChapterInfo(int number, String title, String url) {
             this.number = number;
             this.title = title;
+            this.url = url;
         }
 
         public int getNumber() {
@@ -48,6 +47,10 @@ public class OnePieceChapterParser {
 
         public String getTitle() {
             return title;
+        }
+
+        public String getUrl() {
+            return url;
         }
 
         @Override
