@@ -33,6 +33,12 @@ public class TelegramClient {
 
 	@PostConstruct
 	public void validateConnection() {
+		// Allow the app (and tests) to start without Telegram configured.
+		// If configured, we validate eagerly so misconfigurations fail fast.
+		if (!isConfigured(properties.getBotToken()) || !isConfigured(properties.getChatId())) {
+			log.info("Telegram is not configured; skipping startup validation");
+			return;
+		}
 		try {
 			sendMessage("🤖 Bot started");
 			log.info("✅ Telegram bot connection validated successfully");
@@ -41,11 +47,23 @@ public class TelegramClient {
 		}
 	}
 
+	private boolean isConfigured(String value) {
+		if (value == null) {
+			return false;
+		}
+		String trimmed = value.trim();
+		if (trimmed.isEmpty()) {
+			return false;
+		}
+		// Unresolved placeholder like "${TELEGRAM_BOT_TOKEN}".
+		return !trimmed.contains("${");
+	}
+
 	public void sendMessage(String text) throws IOException, InterruptedException {
-		if (properties.getBotToken() == null || properties.getBotToken().isBlank()) {
+		if (!isConfigured(properties.getBotToken())) {
 			throw new IllegalStateException("Telegram bot token is not configured");
 		}
-		if (properties.getChatId() == null || properties.getChatId().isBlank()) {
+		if (!isConfigured(properties.getChatId())) {
 			throw new IllegalStateException("Telegram chat ID is not configured");
 		}
 

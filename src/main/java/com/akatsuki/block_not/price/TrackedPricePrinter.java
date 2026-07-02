@@ -41,34 +41,35 @@ public class TrackedPricePrinter {
 							.filter(id -> !id.isBlank())
 							.toList();
 
-		if (prices.isEmpty()) {
-			log.info("{} | No prices returned (ids={})", now, coinIds);
-			return;
-		}
-
-		for (String coinId : coinIds) {
-			BigDecimal price = prices.get(coinId);
-			if (price == null) {
-				log.info("{} | {} => (missing) {}", now, coinId, currency);
-				continue;
+			if (prices.isEmpty()) {
+				log.info("{} | No prices returned (ids={})", now, coinIds);
+				return;
 			}
 
-			// Print to console
-			log.info("{} | {} => {} {}", now, coinId, price, currency);
+			for (String coinId : coinIds) {
+				BigDecimal price = prices.get(coinId);
+				if (price == null) {
+					log.info("{} | {} => (missing) {}", now, coinId, currency);
+					continue;
+				}
 
-			// Check if price surpasses threshold and send to Telegram
-			BigDecimal threshold = properties.getPriceThresholds().get(coinId);
-			if (threshold != null && price.compareTo(threshold) > 0) {
-				try {
-					String telegramMessage = coinId + ": " + price + " " + currency + " | " + now;
-					telegramClient.sendMessage(telegramMessage);
-					log.info("✅ Sent Telegram alert for {} (price {} > threshold {})", coinId, price, threshold);
-				} catch (Exception ex) {
-					// Exception will propagate if max consecutive failures reached
-					log.error("Failed to send Telegram message for {}: {}", coinId, ex.getMessage());
+				// Print to console
+				log.info("{} | {} => {} {}", now, coinId, price, currency);
+
+				// Check if price surpasses threshold and send to Telegram
+				BigDecimal threshold = properties.getPriceThresholds().get(coinId);
+				// Treat <= 0 as "disabled" so defaults can be safe.
+				if (threshold != null && threshold.compareTo(BigDecimal.ZERO) > 0 && price.compareTo(threshold) > 0) {
+					try {
+						String telegramMessage = coinId + ": " + price + " " + currency + " | " + now;
+						telegramClient.sendMessage(telegramMessage);
+						log.info("✅ Sent Telegram alert for {} (price {} > threshold {})", coinId, price, threshold);
+					} catch (Exception ex) {
+						// Exception will propagate if max consecutive failures reached
+						log.error("Failed to send Telegram message for {}: {}", coinId, ex.getMessage());
+					}
 				}
 			}
-		}
 		} catch (Exception ex) {
 			log.error("{} | Failed to fetch prices: {}", Instant.now(), ex.getMessage());
 		}

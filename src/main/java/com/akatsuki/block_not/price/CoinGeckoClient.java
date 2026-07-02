@@ -28,12 +28,9 @@ public class CoinGeckoClient {
 	public CoinGeckoClient(TrackerProperties properties) {
 		this.properties = properties;
 		String configuredApiKey = properties.getApiKey();
-		if (configuredApiKey == null || configuredApiKey.isBlank()) {
-			throw new IllegalStateException(
-					"Missing CoinGecko API key. Set COINGECKO_DEMO_API_KEY (mapped to blocknot.tracker.api-key)."
-			);
-		}
-		this.apiKey = configuredApiKey.trim();
+		this.apiKey = (configuredApiKey == null || configuredApiKey.isBlank())
+				? null
+				: configuredApiKey.trim();
 		this.httpClient = HttpClient.newBuilder()
 				.connectTimeout(Duration.ofMillis(properties.getRequestTimeoutMs()))
 				.build();
@@ -85,9 +82,13 @@ public class CoinGeckoClient {
 
 		String idsParam = URLEncoder.encode(String.join(",", coinIds), StandardCharsets.UTF_8);
 		String currencyParam = URLEncoder.encode(vsCurrency, StandardCharsets.UTF_8);
-		String apiKeyParam = URLEncoder.encode(apiKey, StandardCharsets.UTF_8);
 
-		return URI.create(base + "/simple/price?ids=" + idsParam + "&vs_currencies=" + currencyParam
-				+ "&x_cg_demo_api_key=" + apiKeyParam);
+		String url = base + "/simple/price?ids=" + idsParam + "&vs_currencies=" + currencyParam;
+		if (apiKey != null && !apiKey.isBlank()) {
+			String apiKeyParam = URLEncoder.encode(apiKey, StandardCharsets.UTF_8);
+			url += "&x_cg_demo_api_key=" + apiKeyParam;
+		}
+
+		return URI.create(url);
 	}
 }
