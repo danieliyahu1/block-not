@@ -7,7 +7,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 
-public class GitHubReleaseClient {
+public class GitHubReleaseClient implements ReleaseSource {
 
     private static final String ACCEPT_HEADER = "application/vnd.github+json";
     private static final String GITHUB_API_VERSION = "2022-11-28";
@@ -23,7 +23,8 @@ public class GitHubReleaseClient {
                 .build();
     }
 
-    public String fetchLatestRelease() throws IOException, InterruptedException {
+    @Override
+    public String fetchReleases() throws IOException, InterruptedException {
         HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(properties.getApiUrl()))
                 .timeout(Duration.ofMillis(properties.getRequestTimeoutMs()))
                 .header("Accept", ACCEPT_HEADER)

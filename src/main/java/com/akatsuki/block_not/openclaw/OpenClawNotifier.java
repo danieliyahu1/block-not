@@ -1,8 +1,8 @@
 package com.akatsuki.block_not.openclaw;
 
 import com.akatsuki.block_not.github.GitHubReleaseClient;
+import com.akatsuki.block_not.github.GitHubReleaseListParser;
 import com.akatsuki.block_not.github.GitHubReleaseNotifier;
-import com.akatsuki.block_not.github.GitHubReleaseVersionParser;
 import com.akatsuki.block_not.telegram.TelegramClient;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 public class OpenClawNotifier extends GitHubReleaseNotifier {
 
     private static final String PROJECT_NAME = "OpenClaw";
-    private static final String RELEASES_URL = "https://github.com/openclaw/openclaw/releases/latest";
+    private static final String RELEASES_URL = "https://github.com/openclaw/openclaw/releases";
 
     public OpenClawNotifier(OpenClawProperties properties, TelegramClient telegramClient) {
-        super(new GitHubReleaseClient(properties), new GitHubReleaseVersionParser(), telegramClient);
+        super(new GitHubReleaseClient(properties), new GitHubReleaseListParser(), telegramClient);
     }
 
     @Override

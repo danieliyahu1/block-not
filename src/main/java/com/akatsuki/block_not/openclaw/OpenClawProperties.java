@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "blocknot.openclaw")
 public class OpenClawProperties implements GitHubReleaseProperties {
 
-    private String apiUrl = "https://api.github.com/repos/openclaw/openclaw/releases/latest";
+    private String apiUrl = "https://api.github.com/repos/openclaw/openclaw/releases?per_page=30";
 
     private long requestTimeoutMs = 10_000;
 

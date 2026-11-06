@@ -1,8 +1,8 @@
 package com.akatsuki.block_not.opencodetgbot;
 
 import com.akatsuki.block_not.github.GitHubReleaseClient;
+import com.akatsuki.block_not.github.GitHubReleaseListParser;
 import com.akatsuki.block_not.github.GitHubReleaseNotifier;
-import com.akatsuki.block_not.github.GitHubReleaseVersionParser;
 import com.akatsuki.block_not.telegram.TelegramClient;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 public class OpencodeTgBotNotifier extends GitHubReleaseNotifier {
 
     private static final String PROJECT_NAME = "opencode-telegram-bot";
-    private static final String RELEASES_URL = "https://github.com/grinev/opencode-telegram-bot/releases/latest";
+    private static final String RELEASES_URL = "https://github.com/grinev/opencode-telegram-bot/releases";
 
     public OpencodeTgBotNotifier(OpencodeTgBotProperties properties, TelegramClient telegramClient) {
-        super(new GitHubReleaseClient(properties), new GitHubReleaseVersionParser(), telegramClient);
+        super(new GitHubReleaseClient(properties), new GitHubReleaseListParser(), telegramClient);
     }
 
     @Override

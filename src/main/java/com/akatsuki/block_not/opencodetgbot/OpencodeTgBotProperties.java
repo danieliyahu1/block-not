@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "blocknot.opencodetgbot")
 public class OpencodeTgBotProperties implements GitHubReleaseProperties {
 
-    private String apiUrl = "https://api.github.com/repos/grinev/opencode-telegram-bot/releases/latest";
+    private String apiUrl = "https://api.github.com/repos/grinev/opencode-telegram-bot/releases?per_page=30";
 
     private long requestTimeoutMs = 10_000;
 
