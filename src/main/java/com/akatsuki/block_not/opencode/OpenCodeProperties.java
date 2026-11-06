@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "blocknot.opencode")
 public class OpenCodeProperties implements GitHubReleaseProperties {
 
-    private String apiUrl = "https://api.github.com/repos/anomalyco/opencode/releases?per_page=30";
+    private String apiUrl = "https://api.github.com/repos/anomalyco/opencode/releases?per_page=1";
 
     private long requestTimeoutMs = 10_000;
 

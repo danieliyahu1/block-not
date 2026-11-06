@@ -2,12 +2,10 @@ package com.akatsuki.block_not.github;
 
 import com.akatsuki.block_not.telegram.TelegramClient;
 import org.junit.jupiter.api.Test;
-import org.mockito.InOrder;
 
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.mockito.ArgumentMatchers.contains;
-import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -19,9 +17,23 @@ class GitHubReleaseNotifierTests {
     private final TelegramClient telegramClient = mock(TelegramClient.class);
 
     @Test
-    void firstPollAnnouncesOnlyTheNewestRelease() throws Exception {
-        TestNotifier notifier = notifier(payload("v2.2.5", "v2.2.4", "v2.2.3"));
+    void firstPollAnnouncesTheNewestRelease() throws Exception {
+        TestNotifier notifier = notifier(payload("process-daemon-v0.5.0"));
 
+        notifier.checkForNewVersion();
+
+        verify(telegramClient, times(1)).sendMessage(contains("process-daemon-v0.5.0"));
+    }
+
+    @Test
+    void announcesOnlyTheNewestEvenWhenOlderReleasesWereNeverSeen() throws Exception {
+        AtomicReference<String> feed = new AtomicReference<>(payload("v2.2.3"));
+        TestNotifier notifier = notifier(feed);
+        notifier.checkForNewVersion();
+        reset(telegramClient);
+
+        // v2.2.4 and v2.2.5 were published since the last poll; only the newest is announced.
+        feed.set(payload("v2.2.5"));
         notifier.checkForNewVersion();
 
         verify(telegramClient, times(1)).sendMessage(contains("v2.2.5"));
@@ -29,23 +41,7 @@ class GitHubReleaseNotifierTests {
     }
 
     @Test
-    void announcesEveryReleasePublishedBetweenPollsOldestFirst() throws Exception {
-        AtomicReference<String> feed = new AtomicReference<>(payload("v2.2.3"));
-        TestNotifier notifier = notifier(feed);
-        notifier.checkForNewVersion();
-        reset(telegramClient);
-
-        feed.set(payload("v2.2.5", "v2.2.4", "v2.2.3"));
-        notifier.checkForNewVersion();
-
-        InOrder inOrder = inOrder(telegramClient);
-        inOrder.verify(telegramClient).sendMessage(contains("v2.2.4"));
-        inOrder.verify(telegramClient).sendMessage(contains("v2.2.5"));
-        inOrder.verifyNoMoreInteractions();
-    }
-
-    @Test
-    void staysSilentWhenNothingChanged() throws Exception {
+    void staysSilentWhenTheNewestReleaseIsUnchanged() throws Exception {
         TestNotifier notifier = notifier(payload("v2.2.5"));
         notifier.checkForNewVersion();
         reset(telegramClient);
@@ -53,21 +49,6 @@ class GitHubReleaseNotifierTests {
         notifier.checkForNewVersion();
 
         verifyNoInteractions(telegramClient);
-    }
-
-    @Test
-    void announcesAllReleasesWhenTheLastSeenOneLeavesTheWindow() throws Exception {
-        AtomicReference<String> feed = new AtomicReference<>(payload("v1.0.0"));
-        TestNotifier notifier = notifier(feed);
-        notifier.checkForNewVersion();
-        reset(telegramClient);
-
-        feed.set(payload("v1.0.2", "v1.0.1"));
-        notifier.checkForNewVersion();
-
-        InOrder inOrder = inOrder(telegramClient);
-        inOrder.verify(telegramClient).sendMessage(contains("v1.0.1"));
-        inOrder.verify(telegramClient).sendMessage(contains("v1.0.2"));
     }
 
     private TestNotifier notifier(String feed) {
