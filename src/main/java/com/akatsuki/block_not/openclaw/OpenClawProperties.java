@@ -1,12 +1,12 @@
-package com.akatsuki.block_not.zeroclaw;
+package com.akatsuki.block_not.openclaw;
 
 import com.akatsuki.block_not.github.GitHubReleaseProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "blocknot.zeroclaw")
-public class ZeroClawProperties implements GitHubReleaseProperties {
+@ConfigurationProperties(prefix = "blocknot.openclaw")
+public class OpenClawProperties implements GitHubReleaseProperties {
 
-    private String apiUrl = "https://api.github.com/repos/zeroclaw-labs/zeroclaw/releases/latest";
+    private String apiUrl = "https://api.github.com/repos/openclaw/openclaw/releases/latest";
 
     private long requestTimeoutMs = 10_000;
 

@@ -1,4 +1,4 @@
-package com.akatsuki.block_not.zeroclaw;
+package com.akatsuki.block_not.openclaw;
 
 import com.akatsuki.block_not.github.GitHubReleaseClient;
 import com.akatsuki.block_not.github.GitHubReleaseNotifier;
@@ -8,12 +8,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ZeroClawNotifier extends GitHubReleaseNotifier {
+public class OpenClawNotifier extends GitHubReleaseNotifier {
 
-    private static final String PROJECT_NAME = "ZeroClaw";
-    private static final String RELEASES_URL = "https://github.com/zeroclaw-labs/zeroclaw/releases/latest";
+    private static final String PROJECT_NAME = "OpenClaw";
+    private static final String RELEASES_URL = "https://github.com/openclaw/openclaw/releases/latest";
 
-    public ZeroClawNotifier(ZeroClawProperties properties, TelegramClient telegramClient) {
+    public OpenClawNotifier(OpenClawProperties properties, TelegramClient telegramClient) {
         super(new GitHubReleaseClient(properties), new GitHubReleaseVersionParser(), telegramClient);
     }
 
@@ -27,7 +27,7 @@ public class ZeroClawNotifier extends GitHubReleaseNotifier {
         return RELEASES_URL;
     }
 
-    @Scheduled(fixedDelayString = "${blocknot.zeroclaw.poll-delay-ms:3600000}", initialDelayString = "15000")
+    @Scheduled(fixedDelayString = "${blocknot.openclaw.poll-delay-ms:3600000}", initialDelayString = "15000")
     @Override
     public void checkForNewVersion() {
         super.checkForNewVersion();
